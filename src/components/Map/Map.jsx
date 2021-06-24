@@ -1,41 +1,56 @@
 import React,{useState,useEffect} from 'react'
 import {data} from '../../data'
-import ReactMapGL,{Marker,Popup} from 'react-map-gl';
+import ReactMapGL,{Marker,Popup,FlyToInterpolator} from 'react-map-gl';
+import {easeCubic} from 'd3-ease';
+import './Map.css'
+import mapboxgl from "mapbox-gl";
+//Redux
+import {connect} from 'react-redux'
+import {CHOSE_RADIO,CHOSE_RADIO_STATION} from '../../Redux/actions/radio.action'
+import {LOADING} from '../../Redux/actions/loading.action'
+// eslint-disable-next-line import/no-webpack-loader-syntax
+mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
 
-
-function Map() {
-  const [showPopup, togglePopup] = useState(true);
+function Map(props) {
+  const [showPopup, togglePopup] = useState(null);
+  
   const [viewport, setViewport] = useState({
-    latitude: 37.7577,
-    longitude: -122.4376,
+    latitude: 35.652832,
+    longitude: 139.839478,
     zoom: 5,
     width:window.innerWidth,
     height:window.innerHeight,
+    transitionDuration: 1000,
+    transitionInterpolator: new FlyToInterpolator(),
+    transitionEasing: easeCubic
   });
 
   const [dataC, setDataC] = useState([])
 
   useEffect(() => {
-   
-  function success(pos) {
-    var crd = pos.coords;
+  
+  // props.onChoseRadioStation(data[0].radios[0])
+  // props.onChoseRadio(data[0])
+  setDataC(data)
+  }, [props])  
+  
+  function openPP(country){
+    props.onChoseRadioStation(country.radios[0])
+    props.onChoseRadio(country)
+    !props.playing ? props.onLoading(false) : props.onLoading(true)
+    togglePopup(country)
     setViewport((prev)=>({
       ...prev,
-      latitude:crd.latitude,
-      longitude:crd.longitude
+      latitude:Number(country.lat),
+      longitude:Number(country.long),
+      zoom: 5,
+      transitionDuration: 1000,
+      transitionInterpolator: new FlyToInterpolator(),
+      transitionEasing: easeCubic
     }))
+    
 
-    setDataC(data)
   }
-
-
-  navigator.geolocation.getCurrentPosition(success);
-  }, [])  
-
-
- 
-
-  
 
   return (
     <ReactMapGL
@@ -47,24 +62,46 @@ function Map() {
       {
         dataC && dataC.map((country,index)=>{
           return(
-            <Marker latitude={Number(country.lat)} longitude={Number(country.long)} offsetLeft={-5} offsetTop={-12}>
-            <div className='dot'></div>
-          </Marker>
+            <Marker key={index} latitude={Number(country.lat)} longitude={Number(country.long)} offsetLeft={-5} offsetTop={-12}>
+              <div onClick={()=>{openPP(country)}} className='dot'></div>
+            </Marker>
           )
         })
       }
-      
-      {showPopup && <Popup
-          latitude={37.78}
-          longitude={-122.41}
-          closeButton={true}
-          closeOnClick={false}
-          onClose={() => togglePopup(false)}
-          anchor="top" >
-          <div className='dot'></div>
-        </Popup>}
+
+
+      {
+        showPopup ? (
+          <Popup onClose={()=>togglePopup(null)} latitude={Number(showPopup.lat)} longitude={Number(showPopup.long)}>
+              <div className="popup">
+                <h2>{showPopup.country}</h2>
+                <img src={showPopup.image} alt={showPopup.country} />
+                <p>
+                  {showPopup.about}
+                </p>
+              </div>
+          </Popup>
+        ) : null
+      }
+
     </ReactMapGL>
   );
 }
 
-export default Map
+const mapStateToProps = state =>{
+  return{
+      markers:state.MapReducer.data,
+      loading:state.LoadingReducer.loading,
+      playing:state.RadioReducer.playing
+  }
+}
+
+const mapDispatchToProps = dispatch =>{
+  return{
+    onChoseRadio:(country)=>{dispatch({type:CHOSE_RADIO,payload:country})},
+    onChoseRadioStation:(radio)=>{dispatch({type:CHOSE_RADIO_STATION,radio:radio})},
+    onLoading:(loading)=>{dispatch({type:LOADING,loading:loading})}
+  }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Map)

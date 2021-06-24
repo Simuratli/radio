@@ -6,11 +6,20 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "d3-ease": "^3.0.1",
+    "howler": "^2.2.1",
+    "raf": "^3.4.1",
     "react": "^17.0.2",
+    "react-country-flag": "^2.3.0",
     "react-dom": "^17.0.2",
+    "react-howler": "^5.0.0",
     "react-map-gl": "^6.1.16",
+    "react-redux": "^7.2.4",
     "react-scripts": "4.0.3",
-    "web-vitals": "^1.1.2"
+    "redux": "^4.1.0",
+    "redux-thunk": "^2.3.0",
+    "web-vitals": "^1.1.2",
+    "worker-loader": "^3.0.8"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -35,5 +44,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "json-loader": "^0.5.7",
+    "transform-loader": "^0.2.4",
+    "webworkify-webpack": "^1.0.6"
   }
 }

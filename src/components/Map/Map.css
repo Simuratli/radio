@@ -1,0 +1,28 @@
+.map{
+    background: #E1E1E1 !important;
+    border-radius: 14px !important;
+    width: 200px !important;
+}
+
+.popup h2{
+    font-size: 16px;
+}
+
+.popup img{
+    width: 200px;
+    margin: 10px 0;
+}
+
+.popup p {
+    width: 200px;
+    font-size: 14px;
+    font-weight: 400;
+    word-wrap: break-word !important;
+    word-break: break-all !important;
+}
+
+.mapboxgl-popup-close-button{
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+}
