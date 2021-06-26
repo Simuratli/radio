@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux'
 import { createStore,applyMiddleware, compose, combineReducers } from 'redux'
 import thunk from 'redux-thunk'; 
@@ -32,4 +30,3 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-reportWebVitals();

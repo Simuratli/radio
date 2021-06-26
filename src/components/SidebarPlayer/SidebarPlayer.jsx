@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState} from 'react'
 import './SidebarPlayer.css'
 import {connect} from 'react-redux'
 import Info from '../../Assets/Images/info.png'
@@ -13,7 +13,7 @@ import {LOADING} from '../../Redux/actions/loading.action'
 import {MODAL_OPEN,MODAL_ADD_INFO} from '../../Redux/actions/modal.action'
 
 function SidebarTop(props) {
-
+    const [number, setNumber] = useState(2)
 
     function handlePlay () {
         if(props.radio){
@@ -35,6 +35,35 @@ function SidebarTop(props) {
     }
 
 
+    function changeLocalRadio(params) {
+        props.onLoading(true)
+        if(params === 'next'){
+            setNumber(number + 1)
+            // if(number === Number(props.radioStation.radios.length)){
+            //     setNumber(1)
+            // }
+            props.radioStation && props.radioStation.radios.map((radio)=>{
+                if(number === radio.id){
+                    props.onChoseRadioStation(radio)
+                }   
+                return  null
+            })
+        }else{
+            // if(number === 1){
+            //     setNumber(Number(props.radioStation.radios.length))
+            // }
+            setNumber(number - 1)
+            props.radioStation && props.radioStation.radios.map((radio)=>{
+                if(number === radio.id){
+                    props.onChoseRadioStation(radio)
+                }  
+                return  null
+            })
+        }
+        console.log(number);
+    }
+
+
     return (
         <div className="sidebar-player">
                  <div className="sidebar-player-left">
@@ -43,9 +72,9 @@ function SidebarTop(props) {
                         <h6 className="sidebar-country-name">{props.radioStation ? props.radioStation.country : "Chose Country"}</h6>
                      </div>
                      <div className="sidebar-player-control">
-                         <button><img src={PrevButton} alt="prev" /></button>
+                         <button onClick={()=>{changeLocalRadio('prev')}} ><img  src={PrevButton} alt="prev" /></button>
                          <button><img onClick={handlePlay} src={props.playing ? PauseButton : PlayButton} alt="play button" /></button>
-                         <button><img src={NextButton} alt="next button" /></button>
+                         <button onClick={()=>{changeLocalRadio('next')}}><img  src={NextButton} alt="next button" /></button>
                          <input 
                             type="range" 
                             min='0'
